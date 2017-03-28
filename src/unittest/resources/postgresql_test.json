@@ -1,0 +1,6 @@
+[
+{"@timestamp": "2017-03-01T12:05:17.000000Z", "log_level": "DEBUG", "message": "blubb ", "process_id": 3256},
+{"@timestamp": "2017-03-01T12:05:17.000000Z", "process_id": 3256, "log_level":"WARNING", "message": "unrecognized configuration parameter rds.logical_replication"},
+{"@timestamp": "2017-03-01T12:05:17.000000Z", "process_id": 3256, "log_level": "LOG", "message": "redirecting log output to logging collector process"},
+{"@timestamp": "2017-03-01T12:12:49.000000Z", "process_id": 5236, "log_level": "HINT", "message": "Future log output will appear in directory /rdsdbdata/log/error."}
+]

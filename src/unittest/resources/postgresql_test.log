@@ -1,0 +1,4 @@
+2017-03-01 12:05:17 UTC::@:[3256]:DEBUG:  blubb 
+2017-03-01 12:05:17 UTC::@:[3256]:WARNING:  unrecognized configuration parameter "rds.logical_replication"
+2017-03-01 12:05:17 UTC::@:[3256]:LOG:  redirecting log output to logging collector process
+2017-03-01 12:12:49 UTC::@:[5236]:HINT:  Future log output will appear in directory "/rdsdbdata/log/error".
