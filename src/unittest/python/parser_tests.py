@@ -18,7 +18,6 @@ class ParserTests(unittest.TestCase):
         with self.assertRaises(LineParserException):
             parser.parse([])
 
-
     def test_load_with_errors(self):
         with self.assertRaises(ImportError):
             Parser.load('foo')

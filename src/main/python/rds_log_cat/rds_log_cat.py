@@ -69,4 +69,3 @@ def s3_get_object_raw_stream(bucket, key):
     client = boto3.client('s3')
     response = client.get_object(Bucket=bucket, Key=key)
     return response.get('Body')._raw_stream
-

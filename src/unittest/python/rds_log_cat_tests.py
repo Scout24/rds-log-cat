@@ -74,15 +74,17 @@ class Tests(unittest.TestCase):
         reader = [0, 1]
         parser = MagicMock()
         parser.parse.side_effect = [2, 3]
-        result = rds_log_cat.process(reader, parser)
+        result = rds_log_cat.process(reader, parser, '')
         parser.parse.assert_called()
-        self.assertEqual([{'Data': 2}, {'Data': 3}], result)
+        self.assertEqual(
+            [{'PartitionKey': '641ce8fd24c9a626691d97952ff1a2abcbc553e0a9f5ff987b302cc8', 'Data': 2},
+                {'PartitionKey': 'e2b13fb360b1ec2d2474b3482c7c55e7662d589f1fcf057a9c5cd555', 'Data': 3}], result)
 
     def test_process_with_one_unparseable_line_which_should_be_skipped(self):
         reader = [0, 1, 2]
         parser = MagicMock()
         parser.parse.side_effect = [0, LineParserException(), 2]
-        result = rds_log_cat.process(reader, parser)
+        result = rds_log_cat.process(reader, parser, '')
         self.assertEqual(len(result), 2)
 
     @patch('rds_log_cat.rds_log_cat.process')
@@ -91,7 +93,7 @@ class Tests(unittest.TestCase):
     @patch('rds_log_cat.parser.parser.Parser.load')
     def test_read_and_send(self, _, sender, get_reader, process):
         stream_mock = MagicMock()
-        rds_log_cat.read_and_send(stream_mock, 'foo', 'bar')
+        rds_log_cat.read_and_send(stream_mock, 'foo', 'bar', '')
         get_reader.assert_called_once_with(stream_mock)
         process.assert_called_once()
         sender.assert_called_once()
