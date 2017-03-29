@@ -22,11 +22,13 @@ def invoke_lambda(name, payload=None):
 def get_stackname():
     name = os.getenv("STACK_NAME_LAMBDA")
     if name is None:
-        raise MissingConfigurationException(
-            """
-            missing ENV variable. TRY:
-            export STACK_NAME_LAMBDA="rds-log-cat"
-            """)
+        name = 'rds-log-cat' # try default
+        # TODO check if stack exists, otherwise throw an error
+        #raise MissingConfigurationException(
+        #    """
+        #    missing ENV variable. TRY:
+        #    export STACK_NAME_LAMBDA="rds-log-cat"
+        #    """)
     print('lambda from stack: {}'.format(name))
     return name
 

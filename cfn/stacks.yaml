@@ -15,4 +15,4 @@ stacks:
   rds-log-cat-s3:
     template-url: log-bucket.yaml
     parameters:
-      lambdaFunctionArn: '|ref|rds-log-cat-test.lambdaFunctionArn'
+      lambdaFunctionArn: '|ref|rds-log-cat.lambdaFunctionArn'

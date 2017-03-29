@@ -34,14 +34,10 @@ If you developing w/o commiting to git, you have to set the following only once:
 
     export VERSION="v0.1.5"
 
-Then deploy/update the stack with the new lambda zip:
+Now can update the stacks with the new lambda zip: 
 
     cf sync cfn/stacks.yaml -p rds-log-cat.lambdaFunctionS3Key=rds_log_cat_${VERSION}-${BUILD_NUMBER}/rds_log_cat.zip -p rds-log-cat.lambdaFunctionS3Bucket=${DISTRIBUTION_BUCKET_NAME}
     
-
-If you run into trouble with the S3 bucket. There might be a circular dependency between the two stacks.
-First try to create the lambda stack only! Then you should now be able to run the full stack(s) deployment.
-
 Testing
 -------
 
