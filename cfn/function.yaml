@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  logStreamArn:
+    Type: String
+    Description: Kinesis stream to put logs to
+  logStreamName:
+    Type: String
+    Description: Kinesis stream to put logs to
+  lambdaFunctionS3Bucket:
+    Type: String
+    Description: where to find the lambda function code
+  lambdaFunctionS3Key:
+    Type: String
+    Description: where to find the lambda function code
+  logFileType:
+    Type: String
+    Description: choose mysql or postgresql
+
+Resources:
+
+  lambdaFunction: 
+    Type: "AWS::Lambda::Function"
+    Properties: 
+      Handler: "rds_log_cat.rds_log_cat.handler"
+      Role: 
+        Fn::GetAtt: 
+          - "lambdaExecutionRole"
+          - "Arn"
+      Code: 
+        S3Bucket: '|Ref|lambdaFunctionS3Bucket'
+        S3Key: '|Ref|lambdaFunctionS3Key' 
+      Description: 
+        '|Join|':
+          - '{'
+          - '"kinesisStream":"'
+          - '|Ref|logStreamName'
+          - '"'
+          - ','
+          - '"type":"'
+          - '|Ref|logFileType'
+          - '"'
+          - '}'
+      Runtime: "python2.7"
+      Timeout: "120"
+
+# ---------------------------------------------------------
+# Policy to Execute the lambda 
+# ---------------------------------------------------------
+  lambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: lambdaDescribeConfiguration
+        PolicyDocument:
+          Statement:
+          - Action: 'lambda:GetFunctionConfiguration'
+            Effect: Allow
+            Resource: '*'
+          Version: '2012-10-17'
+      - PolicyName: kinesisLogStreamAccess
+        PolicyDocument:
+          Statement:
+          - Action:
+            - 'kinesis:*'
+            Effect: Allow
+            Resource: '|Ref|logStreamArn'
+          Version: '2012-10-17'
+      - PolicyName: s3Access
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - s3:Get*
+            - s3:List*
+            Resource: "*"
+      - PolicyName: loggingToCloudwatch  
+        PolicyDocument:
+          Statement:
+          - Action:
+            - logs:Describe*
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Effect: Allow
+            Resource: "*"
+          Version: '2012-10-17'
+# ---------------------------------------------------------
+# Policy to Invoke the lambda from s3
+# ---------------------------------------------------------
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: 
+        Fn::GetAtt: 
+          - "lambdaFunction"
+          - "Arn"
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount:
+        Ref: AWS::AccountId
+
+# ---------------------------------------------------------
+# Outputs
+# ---------------------------------------------------------
+Outputs:
+    lambdaFunctionName:
+        Value: '|Ref|lambdaFunction'
+        Description: Name of lambda function
+    lambdaFunctionArn:
+        Value: 
+          Fn::GetAtt:
+            - lambdaFunction
+            - Arn
+        Description: Arn of lambda function

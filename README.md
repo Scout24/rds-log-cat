@@ -28,7 +28,7 @@ First configure the location, where to put the artifacts (lamdba and cloudformat
 
 Build and deploy with the "teamcity" profile:
     
-    pyb -E teamcity
+    pyb -o -E teamcity
    
 At the end you will see, where the lambda is deployed to.
 
@@ -37,7 +37,7 @@ Configuration is made in the description section of the function.
 * kinesisStream - kinesis stream to post to
 * type - type of logfile can be: postgresql or mysql
 
-Example stacks can be found in [cfn/](tree/master/cfn/).
+Example stacks can be found in [cfn/](tree/master/cfn/). See [README](tree/master/cfn/README.md) for how to deploy the stacks.
 
 You can write your own parser to parse your logfiles (see below). 
 

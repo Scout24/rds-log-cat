@@ -48,12 +48,12 @@ class Tests(unittest.TestCase):
     @patch('rds_log_cat.rds_log_cat.get_config')
     def test_handler(self, get_config, get_bucket_and_key_from_event, read_and_send, s3_get_object_raw_stream):
         get_config.return_value = ('type', 'kinesisStream')
-        get_bucket_and_key_from_event.return_value = [('foo', 'bar')]
+        get_bucket_and_key_from_event.return_value = [('foo', 'key')]
         rds_log_cat.handler(
             self.example_minimal_s3_event(),
             Tests.MockContext('arn', 'funcname', 'anyVersion'))
         read_and_send.assert_called_once_with(
-            s3_get_object_raw_stream('foo', 'bar'), 'type', 'kinesisStream')
+            s3_get_object_raw_stream('foo', 'key'), 'type', 'kinesisStream', 'key')
 
     @patch('rds_log_cat.rds_log_cat.s3_get_object_raw_stream')
     @patch('rds_log_cat.rds_log_cat.read_and_send')
@@ -75,10 +75,11 @@ class Tests(unittest.TestCase):
         parser = MagicMock()
         parser.parse.side_effect = [2, 3]
         result = rds_log_cat.process(reader, parser, '')
+        expected = [{'PartitionKey': '641ce8fd24c9a626691d97952ff1a2abcbc553e0a9f5ff987b302cc8', 'Data': '2'},
+                    {'PartitionKey': 'e2b13fb360b1ec2d2474b3482c7c55e7662d589f1fcf057a9c5cd555', 'Data': '3'}]
         parser.parse.assert_called()
-        self.assertEqual(
-            [{'PartitionKey': '641ce8fd24c9a626691d97952ff1a2abcbc553e0a9f5ff987b302cc8', 'Data': 2},
-                {'PartitionKey': 'e2b13fb360b1ec2d2474b3482c7c55e7662d589f1fcf057a9c5cd555', 'Data': 3}], result)
+        print(result)
+        self.assertEqual(expected, result)
 
     def test_process_with_one_unparseable_line_which_should_be_skipped(self):
         reader = [0, 1, 2]

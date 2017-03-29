@@ -2,7 +2,6 @@ from __future__ import print_function, absolute_import, division
 
 import sys
 import inspect
-import json
 
 
 class Parser(object):
@@ -30,9 +29,6 @@ class Parser(object):
             raise TypeError("%s is not a class" % cls)
         # Return class
         return cls
-
-    def _to_json(self, data):
-        return json.dumps(data, sort_keys=True)
 
     def parse(self, line, **args):
         """

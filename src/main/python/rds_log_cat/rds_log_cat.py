@@ -1,6 +1,7 @@
 from __future__ import print_function, absolute_import, division
 
 import hashlib
+import json
 import logging
 import urllib
 
@@ -16,7 +17,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 def get_config(context):
     config = load_config(Context=context)
-    logging.info('Loaded config: %s', config)
+    logging.info('Loaded config: {}'.format(config))
     logfile_type = config.get('type')
     stream_to_send = config.get('kinesisStream')
     return (logfile_type, stream_to_send)
@@ -34,12 +35,14 @@ def generate_partition_key(file_name, line_index):
 
 
 def handler(event, context):
-    logging.info('Received event: %s', event)
+    logging.info('Received event: {}'.format(event))
     (logfile_type, kinesis_stream) = get_config(context)
     for bucket, key in get_bucket_and_key_from_event(event):
         logging.info("Processing key {} from bucket {}.".format(key, bucket))
         read_and_send(
-            s3_get_object_raw_stream(bucket, key), logfile_type, kinesis_stream)
+            s3_get_object_raw_stream(bucket, key), logfile_type, kinesis_stream, key)
+
+# TODO: counters
 
 
 def process(reader, parser, file_name):
@@ -47,9 +50,10 @@ def process(reader, parser, file_name):
     for index, line in enumerate(reader):
         record = {}
         try:
-            record['Data'] = parser.parse(line)
+            record['Data'] = json.dumps(parser.parse(line))
             record['PartitionKey'] = generate_partition_key(file_name, index)
             # TODO: add more fields for the source of this record
+            # record['origin'] = ''
             records.append(record)
         except LineParserException:
             logging.debug('skipped line {}'.format(index + 1))

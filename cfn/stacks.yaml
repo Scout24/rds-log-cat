@@ -1,0 +1,18 @@
+region: eu-west-1
+stacks:
+  rds-log-cat:
+    template-url: function.yaml
+    parameters:
+      # you can reference the existing stack with its outputs
+      logStreamArn: '|ref|rds-dog-logging-stream.arn'
+      logStreamName: '|ref|rds-dog-logging-stream.streamName'
+      # take values from deploy/build
+      # e.g. env DISTRIBUTION_BUCKET_NAME
+      lambdaFunctionS3Bucket: is24-pro-test-fborchers
+      lambdaFunctionS3Key: rds_log_cat_v0.1.3-5/rds_log_cat.zip
+      logFileType: postgresql
+
+  rds-log-cat-s3:
+    template-url: log-bucket.yaml
+    parameters:
+      lambdaFunctionArn: '|ref|rds-log-cat-test.lambdaFunctionArn'

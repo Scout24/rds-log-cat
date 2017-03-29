@@ -2,14 +2,15 @@ import os
 from pybuilder.core import use_plugin, init
 from pybuilder.vcs import VCSRevision
 
+use_plugin('copy_resources')
+use_plugin('pypi:pybuilder_aws_plugin')
 use_plugin("python.core")
-use_plugin("python.unittest")
-use_plugin("python.install_dependencies")
-use_plugin("python.flake8")
 use_plugin("python.coverage")
 use_plugin("python.distutils")
-use_plugin('pypi:pybuilder_aws_plugin')
-use_plugin('copy_resources')
+use_plugin("python.flake8")
+use_plugin("python.install_dependencies")
+use_plugin('python.integrationtest')
+use_plugin("python.unittest")
 
 name = "rds_log_cat"
 version = '0.1.%s' % VCSRevision().get_git_revision_count()
@@ -47,6 +48,8 @@ def set_propenties(project):
     project.set_property('bucket_prefix', '%s_' % name)
     project.set_property('template_key_prefix', '%s_' % name)
 
+    project.set_property("integrationtest_inherit_environment", True)
+
     project.set_property('flake8_include_test_sources', True)
     project.set_property('flake8_break_build', True)
     project.set_property('install_dependencies_upgrade', True)
@@ -62,8 +65,6 @@ def set_properties_for_teamcity_builds(project):
     project.default_task = [
         'clean',
         'install_build_dependencies',
-        'publish',
-        'package_lambda_code',
         'upload_zip_to_s3',
         'upload_cfn_to_s3',
     ]

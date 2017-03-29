@@ -1,0 +1,23 @@
+# 
+# use this stack to create TODO  after created the lamdba function
+# 
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  lambdaFunctionArn:
+    Type: String
+    Description: function to trigger
+
+Resources:
+  logBucket: 
+    Type: "AWS::S3::Bucket"
+    Properties: 
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - 
+            Event: "s3:ObjectCreated:*"
+            Function: '|Ref|lambdaFunctionArn'
+
+Output:
+  bucketName:
+    Value: '|Ref|logBucket'
+    Description: Name of the log bucket
