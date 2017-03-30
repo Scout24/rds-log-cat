@@ -9,11 +9,11 @@ class ParserTests(unittest.TestCase):
 
     def test_load(self):
         # should pass w/o errors
-        Parser.load('mysql')
-        Parser.load('MysQL')
+        # Parser.load('mysql')
+        Parser.load('Mysql56')
 
     def test_instanciate_after_load(self):
-        cls = Parser.load('PostgreSQL')
+        cls = Parser.load('Postgresql')
         parser = cls()
         with self.assertRaises(LineParserException):
             parser.parse([])

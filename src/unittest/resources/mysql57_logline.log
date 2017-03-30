@@ -1,0 +1,1 @@
+2017-03-30T03:01:53.766220Z 405285 [Note] Aborted connection 405285 to db: 'mysql' user: 'rdsadmin' host: 'localhost' (Got an error reading communication packets)
