@@ -1,3 +1,4 @@
 [
-{"@timestamp": "2017-04-30T03:01:53.766220Z", "log_level": "Note", "message": "Aborted connection 405285 to db: 'mysql' user: 'rdsadmin' host: 'localhost' (Got an error reading communication packets)", "process_id": 405285}
+{"@timestamp": "2017-04-30T03:01:53.766220Z", "log_level": "Note", "message": "Aborted connection 405285 to db: 'mysql' user: 'rdsadmin' host: 'localhost' (Got an error reading communication packets)", "process_id": 405285},
+{"@timestamp": "2017-04-30T04:01:53.766220Z", "log_level": "Error", "message": "Aborted (Got an error reading communication packets)", "process_id": 405285}
 ]
