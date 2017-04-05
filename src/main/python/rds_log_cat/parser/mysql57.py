@@ -18,7 +18,6 @@ class Mysql57(Parser):
         parses the fields in line to generate json structure
         """
         expected_min_no_fields = 5
-        result = {}
         if len(line) < expected_min_no_fields:
             raise LineParserException('line too short')
 
@@ -26,10 +25,9 @@ class Mysql57(Parser):
         log_level = line[2].lstrip("[").rstrip("]")
         timezone = 'UTC'
 
-        result = {
+        return {
             '@timestamp': self.compose_timestamp(line[0], timezone),
             'log_level': log_level,
             'process_id': int(pid),
             'message': ' '.join(map(str, line[3:]))
         }
-        return result
