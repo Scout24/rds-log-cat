@@ -7,8 +7,8 @@ class Mysql57(Parser):
         Parser.__init__(self)
 
     def compose_timestamp(self, datetime, timezone):
-        if not len(datetime) == 27:
-            raise LineParserException('wrong length of date')
+        if len(datetime) != 27:
+            raise LineParserException('wrong length of datetime - wrong date is: ' + datetime)
         if not timezone == 'UTC':
             raise LineParserException('Only able to parse times in UTC. You gave {}'.format(timezone))
         return datetime

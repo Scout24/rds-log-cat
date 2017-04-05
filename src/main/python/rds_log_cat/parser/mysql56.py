@@ -7,11 +7,11 @@ class Mysql56(Parser):
         Parser.__init__(self)
 
     def compose_timestamp(self, date, time, timezone):
-        if not len(date) == 10:
-            raise LineParserException('wrong length of date')
-        if not len(time) == 8:
-            raise LineParserException('wrong length of time')
-        if not timezone == 'UTC':
+        if len(date) != 10:
+            raise LineParserException('wrong length of date - wrong date is: ' + date)
+        if len(time) != 8:
+            raise LineParserException('wrong length of time - wrong time is: ' + time)
+        if timezone != 'UTC':
             raise LineParserException('Only able to parse times in UTC. You gave {}'.format(timezone))
         return "{}T{}.000000Z".format(date, time)
 
