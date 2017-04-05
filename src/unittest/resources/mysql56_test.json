@@ -1,0 +1,5 @@
+[
+{"@timestamp": "2017-03-29T13:10:27.000000Z", "log_level": "Warning", "message": "IP address '10.41.162.212' could not be resolved: Name or service not known", "process_id": 4534},
+{"@timestamp": "2017-04-29T13:10:27.000000Z", "log_level": "Info", "message": "IP address '10.41.162.213' could not be resolved: Name or service not known", "process_id": 4534},
+{"@timestamp": "2017-04-30T13:10:27.000000Z", "log_level": "Warning", "message": "IP address '10.41.162.214' could not be resolved: Name or service not known", "process_id": 4534}
+]

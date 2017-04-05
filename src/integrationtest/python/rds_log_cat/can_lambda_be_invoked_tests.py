@@ -7,8 +7,6 @@ import os
 import boto3
 import unittest2 as unittest
 
-from utils import MissingConfigurationException
-
 
 def invoke_lambda(name, payload=None):
     client = boto3.client('lambda')
@@ -22,9 +20,9 @@ def invoke_lambda(name, payload=None):
 def get_stackname():
     name = os.getenv("STACK_NAME_LAMBDA")
     if name is None:
-        name = 'rds-log-cat' # try default
+        name = 'rds-log-cat'   # try default
         # TODO check if stack exists, otherwise throw an error
-        #raise MissingConfigurationException(
+        # raise MissingConfigurationException(
         #    """
         #    missing ENV variable. TRY:
         #    export STACK_NAME_LAMBDA="rds-log-cat"

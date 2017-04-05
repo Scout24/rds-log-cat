@@ -9,8 +9,7 @@ class LineReaderTests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         with open('src/unittest/resources/elb_logline.log') as f:
-            self.oneline = f.read()
-        self.oneline = self.oneline.splitlines()[0] + '\n'
+            self.oneline = f.readline()
 
     def test_paginate_with_one_line(self):
         with open('src/unittest/resources/elb_logline.log') as f:

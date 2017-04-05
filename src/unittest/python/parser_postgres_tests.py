@@ -42,9 +42,9 @@ class PostgresqlTests(unittest.TestCase):
             p('expect', json_data[index])
             p('out', out)
 
-        with open('src/unittest/resources/postgresql_test.json', 'r') as j:
+        with open('src/unittest/resources/postgresql_test.json') as j:
             json_data = json.load(j)
-        with open('src/unittest/resources/postgresql_test.log', 'r') as f:
+        with open('src/unittest/resources/postgresql_test.log') as f:
             log_reader = linereader.get_reader_with_lines_splitted(f)
             for index, line in enumerate(log_reader):
                 if len(line) == 0:
@@ -54,7 +54,7 @@ class PostgresqlTests(unittest.TestCase):
                 self.assertEqual(json_data[index], out)
 
     def test_parse_wrong_test_log(self):
-        with open('src/unittest/resources/postgresql_test_wrong.log', 'r') as f:
+        with open('src/unittest/resources/postgresql_test_wrong.log') as f:
             log_reader = linereader.get_reader_with_lines_splitted(f)
             for index, line in enumerate(log_reader):
                 with self.assertRaises(LineParserException):
