@@ -61,7 +61,7 @@ def set_properties_for_teamcity_builds(project):
                                  os.environ.get('BUILD_NUMBER', 0))
     print("##teamcity[buildNumber '{0}']".format(version))
     project.set_property('teamcity_output', True)
-    project.set_property('teamcity_parameter', 'uploaded_zip')
+    project.set_property('teamcity_parameter', 'env.uploaded_zip')
 
     project.default_task = [
         'clean',
