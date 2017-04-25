@@ -28,6 +28,7 @@ def set_properties(project):
     project.build_depends_on("moto")
     project.build_depends_on("mock")
     project.build_depends_on("requests_mock")
+    project.build_depends_on("cfn-sphere")
 
     project.depends_on("boto3")
     project.depends_on("requests")
