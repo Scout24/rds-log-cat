@@ -73,9 +73,9 @@ class Stack(object):
                         break
         return result
 
-    def _change_to_workdir(self, dir=None):
-        if dir is not None:
-            self.workdir = dir
+    def _change_to_workdir(self, path=None):
+        if path is not None:
+            self.workdir = path
             self.savedPath = os.getcwd()
             self.logger.debug('saved path: %s', self.savedPath)
         os.chdir(self.workdir)
@@ -123,8 +123,6 @@ def run():
     stack_basename = get_stack_name(BASE_PROJECT_NAME)
     stack = Stack('cfn/stacks.yaml')
     parameters = {
-        'logStreamArn': '|ref|rds-dog-logging-stream.arn',
-        'logStreamName': '|ref|rds-dog-logging-stream.streamName',
         'lambdaFunctionS3Bucket': bucket,
         'lambdaFunctionS3Key': key,
         'logFileType': 'postgresql'

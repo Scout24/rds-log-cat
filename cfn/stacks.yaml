@@ -4,8 +4,8 @@ stacks:
     template-url: function.yaml
     parameters:
       # you can reference the existing stack with its outputs
-      logStreamArn: '|ref|rds-dog-logging-stream.arn'
-      logStreamName: '|ref|rds-dog-logging-stream.streamName'
+      logStreamArn: '|ref|rds-log-cat-kinesis.arn'
+      logStreamName: '|ref|rds-log-cat-kinesis.name'
       # take values from deploy/build
       # e.g. env DISTRIBUTION_BUCKET_NAME
       #lambdaFunctionS3Bucket:
@@ -18,3 +18,6 @@ stacks:
     template-url: log-bucket.yaml
     parameters:
       lambdaFunctionArn: '|ref|rds-log-cat.lambdaFunctionArn'
+
+  rds-log-cat-kinesis:
+    template-url: kinesis.yaml
