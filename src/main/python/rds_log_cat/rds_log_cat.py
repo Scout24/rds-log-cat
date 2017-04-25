@@ -52,8 +52,6 @@ def process(reader, parser, file_name, origin):
         record = {}
         try:
             data = parser.parse(line)
-            print('*****')
-            print(data)
             data['origin'] = origin
             record['Data'] = json.dumps(data)
             record['PartitionKey'] = generate_partition_key(file_name, index)
