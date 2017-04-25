@@ -11,6 +11,8 @@ stacks:
       #lambdaFunctionS3Bucket:
       #lambdaFunctionS3Key:
       logFileType: postgresql
+      # put your origin for the messages here
+      origin: rds
 
   rds-log-cat-s3:
     template-url: log-bucket.yaml

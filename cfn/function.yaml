@@ -15,6 +15,9 @@ Parameters:
   logFileType:
     Type: String
     Description: choose mysql or postgresql
+  origin:
+    Type: String
+    Description: add this origin to every produced message
 
 Resources:
 
@@ -38,6 +41,10 @@ Resources:
           - ','
           - '"type":"'
           - '|Ref|logFileType'
+          - '"'
+          - ','
+          - '"origin":"'
+          - '|Ref|origin'
           - '"'
           - '}'
       Runtime: "python2.7"

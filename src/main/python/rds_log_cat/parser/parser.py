@@ -33,7 +33,7 @@ class Parser(object):
     def parse(self, line, **args):
         """
         Parse line
-
+        returns dict
         Should be overridden in subclass
         """
         raise NotImplementedError
