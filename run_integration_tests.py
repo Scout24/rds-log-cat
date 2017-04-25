@@ -67,7 +67,7 @@ class Stack(object):
             if value.lower().startswith('|ref|'):
                 ref = value.split('|', 2)[2]
                 for old, new in mapping.iteritems():
-                    if ref.startswith(old):
+                    if ref.startswith('{}.'.format(old)):
                         result['parameters'][key] = '|ref|{}{}'.format(
                             new, ref[len(old):])
                         break
