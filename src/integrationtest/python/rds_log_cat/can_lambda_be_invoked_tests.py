@@ -2,7 +2,6 @@ from __future__ import print_function, unicode_literals, division
 
 import base64
 import json
-import os
 
 import boto3
 import unittest2 as unittest
@@ -17,28 +16,14 @@ def invoke_lambda(name, payload=None):
     return response
 
 
-def get_stackname():
-    name = os.getenv("STACK_NAME_LAMBDA")
-    if name is None:
-        name = 'rds-log-cat'   # try default
-        # TODO check if stack exists, otherwise throw an error
-        # raise MissingConfigurationException(
-        #    """
-        #    missing ENV variable. TRY:
-        #    export STACK_NAME_LAMBDA="rds-log-cat"
-        #    """)
-    print('lambda from stack: {}'.format(name))
-    return name
-
-
-def get_s3_bucket_stack_name():
-    return '{}-s3'.format(get_stackname())
+class MissingConfigurationException(Exception):
+    pass
 
 
 def get_lambda_function_name():
     client = boto3.client('cloudformation')
     response = client.describe_stack_resource(
-        StackName=get_stackname(), LogicalResourceId='lambdaFunction')
+        StackName='rds-log-cat-it', LogicalResourceId='lambdaFunction')
     name = response['StackResourceDetail']['PhysicalResourceId']
     print('lambda function name: {}'.format(name))
     return name
@@ -56,20 +41,25 @@ def get_test_logfile():
 def get_s3_bucket_name():
     client = boto3.client('cloudformation')
     response = client.describe_stack_resource(
-        StackName=get_s3_bucket_stack_name(), LogicalResourceId='logBucket')
+        StackName='rds-log-cat-s3-it', LogicalResourceId='logBucket')
     return response['StackResourceDetail']['PhysicalResourceId']
+
+
+def delete_prefix(bucket, prefix):
+    s3 = boto3.client('s3')
+    response = s3.list_objects_v2(Bucket=bucket, Prefix=prefix)
+    keys_to_delete = {'Objects': []}
+    keys_to_delete['Objects'] = [{'Key': o['Key']}
+                                 for o in response['Contents']]
+    response = s3.delete_objects(Bucket=bucket, Delete=keys_to_delete)
 
 
 class InvocationTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        pass
-
     def assert_no_invocation_error(self, response):
         if 'LogResult' in response:
-            self.assertNotIn('FunctionError', response,
-                             'invocation error.\n response: {}'.format(base64.b64decode(response['LogResult'])))
+            self.assertNotIn('FunctionError', response, 'invocation error.\n response: {}'.format(
+                base64.b64decode(response['LogResult'])))
         else:
             print(response)
 
@@ -80,17 +70,22 @@ class InvocationTest(unittest.TestCase):
         self.assertEqual(200, response['StatusCode'])
 
     def test_is_lambda_be_able_to_read_s3(self):
-        bucket, key = get_test_logfile()
-        event = {
-            'Records': [{
-                's3': {'bucket': {'name': bucket},
-                       'object': {'key': key}}
-            }]
-        }
-        print(json.dumps(event))
-        response = invoke_lambda(
-            get_lambda_function_name(), json.dumps(event))
-        self.assert_no_invocation_error(response)
+        bucket = None
+        try:
+            bucket, key = get_test_logfile()
+            event = {
+                'Records': [{
+                    's3': {'bucket': {'name': bucket},
+                           'object': {'key': key}}
+                }]
+            }
+            print(json.dumps(event))
+            response = invoke_lambda(
+                get_lambda_function_name(), json.dumps(event))
+            self.assert_no_invocation_error(response)
+        finally:
+            if bucket:
+                delete_prefix(bucket, key)
 
 
 if __name__ == '__main__':

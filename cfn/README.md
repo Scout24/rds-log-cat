@@ -44,4 +44,4 @@ Testing
 
 To test your deployment and the lambda itself, run the integration tests:
 
-    pyb run_integration_tests
+    python ./run_integration_tests.py
