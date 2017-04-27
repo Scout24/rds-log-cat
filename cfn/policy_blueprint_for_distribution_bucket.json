@@ -1,0 +1,19 @@
+{
+	"Version": "2008-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Principal": {
+				"AWS": ${account_arns_json}
+			},
+			"Action": [
+				"s3:GetObject",
+				"s3:ListBucket"
+			],
+			"Resource": [
+				"arn:aws:s3:::${target_resource}/*",
+				"arn:aws:s3:::${target_resource}"
+			]
+		}
+	]
+}
