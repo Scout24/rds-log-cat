@@ -37,9 +37,11 @@ def set_properties(project):
     '''
     Distribution bucket setting for lambda
     '''
+    region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
     project.set_property(
         'bucket_name', os.environ.get('DISTRIBUTION_BUCKET_NAME'))
-    # if you want to distribute outside your account, change the following to 'public-read'
+    # if you want to distribute outside your account, change the following to
+    # 'public-read'
     project.set_property(
         'lambda_file_access_control',
         os.environ.get('LAMBDA_FILE_ACCESS_CONTROL', 'bucket-owner-full-control'))
@@ -72,9 +74,24 @@ def set_properties_for_teamcity_builds(project):
     ]
     project.set_property('install_dependencies_index_url',
                          os.environ.get('PYPIPROXY_URL'))
+    region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
+    project.set_property(
+        'bucket_name', '{}-{}'.format(os.environ.get('DISTRIBUTION_BUCKET_NAME'), region_to_deploy))
 
     project.set_property('template_files',
-    [
-        ('cfn','function.yaml')
-    ])
+                         [
+                             ('cfn', 'function.yaml')
+                         ])
 
+
+def replace_region_in_template(template_file, region):
+    replacements = {'eu-west-1': region}
+    lines = []
+    with open(template_file) as infile:
+        for line in infile:
+            for src, target in replacements.iteritems():
+                line = line.replace(src, target)
+            lines.append(line)
+    with open(template_file, 'w') as outfile:
+        for line in lines:
+            outfile.write(line)

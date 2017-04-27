@@ -117,7 +117,7 @@ def get_stack_name(project_name):
 
 def run():
     # pybuilder.cli.main('-o', '-E', 'teamcity')
-    bucket = os.environ.get('DISTRIBUTION_BUCKET_NAME')
+    bucket = '{}-eu-west-1'.format(os.environ.get('DISTRIBUTION_BUCKET_NAME'))
     key = os.environ.get(
         'uploaded_zip', keyname_of_lambda(BASE_PROJECT_NAME))
     stack_basename = get_stack_name(BASE_PROJECT_NAME)
@@ -137,4 +137,9 @@ def run():
     return result
 
 if __name__ == '__main__':
+    region = os.environ.get('AWS_DEFAULT_REGION')
+    if region != "eu-west-1":
+        print('Wrong AWS_DEFAULT_REGION {}. Please set to eu-west-1.'.format(region))
+        print('eg: export AWS_DEFAULT_REGION="eu-west-1"')
+        sys.exit(1)
     sys.exit(run())

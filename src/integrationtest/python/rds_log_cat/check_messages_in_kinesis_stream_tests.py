@@ -1,7 +1,10 @@
-
 import boto3
+import json
 import time
 import unittest2 as unittest
+
+from can_lambda_be_invoked_tests import (
+    get_test_logfile, invoke_lambda, get_lambda_function_name, delete_prefix)
 
 
 class MessageTest(unittest.TestCase):
@@ -10,10 +13,10 @@ class MessageTest(unittest.TestCase):
     def setUpClass(cls):
         cls.kinesis_client = boto3.client('kinesis')
         cls.shard_id = 'shardId-000000000000'
-        # TODO: discover 
         cls.name = 'rds-log-cat-kinesis-it-kinesisStream-18ULEPUSFVZ9O'
-        cls.shard_it = cls.get_latest_shard_it(
-            cls.kinesis_client, cls.name, cls.shard_id)
+        cls.shard_it = None
+        # cls.shard_it = cls.get_latest_shard_it(
+        #    cls.kinesis_client, cls.name, cls.shard_id)
 
     @staticmethod
     def get_latest_shard_it(client, name, sid):
@@ -23,9 +26,6 @@ class MessageTest(unittest.TestCase):
             ShardIteratorType="LATEST")["ShardIterator"]
 
     def invoke_lambda(self):
-        import json
-        from can_lambda_be_invoked_tests import (
-            get_test_logfile, invoke_lambda, get_lambda_function_name, delete_prefix)
         bucket = None
         try:
             bucket, key = get_test_logfile()
@@ -36,7 +36,7 @@ class MessageTest(unittest.TestCase):
                 }]
             }
             print(json.dumps(event))
-            response = invoke_lambda(
+            invoke_lambda(
                 get_lambda_function_name(), json.dumps(event))
         finally:
             if bucket:

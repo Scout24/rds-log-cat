@@ -24,7 +24,9 @@ To build and test locally, simply execute:
 To build and deploy to AWS:
 First configure the location, where to put the artifacts (lamdba and cloudformation stack) to:
 
-    DISTRIBUTION_BUCKET_NAME=rds-log-cat-eu-west-1
+    DISTRIBUTION_BUCKET_NAME=rds-log-cat
+
+The AWS_DEFAULT_REGION will be added to the DISTRIBUTION_BUCKET_NAME like: rds-log-cat-eu-west-1
 
 Build and deploy with the "teamcity" profile:
     
