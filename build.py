@@ -22,6 +22,11 @@ url = 'https://github.com/ImmobilienScout24/rds-log-cat'
 default_task = ['clean', 'analyze', 'package']
 
 
+def get_distribution_bucket_name():
+    region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
+    return '{}-{}'.formet(os.environ.get('DISTRIBUTION_BUCKET_PREFIX'), region_to_deploy))
+
+
 @init
 def set_properties(project):
     project.build_depends_on("unittest2")
@@ -37,9 +42,8 @@ def set_properties(project):
     '''
     Distribution bucket setting for lambda
     '''
-    region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
     project.set_property(
-        'bucket_name', os.environ.get('DISTRIBUTION_BUCKET_NAME'))
+        'bucket_name', os.environ.get('DISTRIBUTION_BUCKET_NAME'), get_distribution_bucket_name())
     # if you want to distribute outside your account, change the following to
     # 'public-read'
     project.set_property(
@@ -74,9 +78,8 @@ def set_properties_for_teamcity_builds(project):
     ]
     project.set_property('install_dependencies_index_url',
                          os.environ.get('PYPIPROXY_URL'))
-    region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
     project.set_property(
-        'bucket_name', '{}-{}'.format(os.environ.get('DISTRIBUTION_BUCKET_NAME'), region_to_deploy))
+        'bucket_name', get_distribution_bucket_name())
 
     project.set_property('template_files',
                          [

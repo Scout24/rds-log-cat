@@ -14,7 +14,7 @@ Build and Deploy
 
 If you not already have, build & deploy the lambda. You need to set the distribution bucket once:
 
-    export DISTRIBUTION_BUCKET_NAME=[a bucket where to put the lambda zip, AWS_DEFAULT_REGION will be added]
+    export DISTRIBUTION_BUCKET_PREFIX=[a bucket where to put the lambda zip, AWS_DEFAULT_REGION will be added]
     
 For every build, execute these two lines:
 
@@ -36,7 +36,7 @@ If you developing w/o commiting to git, you have to set the following only once:
 
 Now can update the stacks with the new lambda zip: 
 
-    cf sync cfn/stacks.yaml -p rds-log-cat.lambdaFunctionS3Key=rds_log_cat_${VERSION}-${BUILD_NUMBER}/rds_log_cat.zip -p rds-log-cat.lambdaFunctionS3Bucket=${DISTRIBUTION_BUCKET_NAME}-eu-west-1
+    cf sync cfn/stacks.yaml -p rds-log-cat.lambdaFunctionS3Key=rds_log_cat_${VERSION}-${BUILD_NUMBER}/rds_log_cat.zip -p rds-log-cat.lambdaFunctionS3Bucket=${DISTRIBUTION_BUCKET_PREFIX}-eu-west-1
     
 Testing
 -------
