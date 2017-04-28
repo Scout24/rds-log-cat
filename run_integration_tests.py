@@ -12,22 +12,41 @@ BASE_PROJECT_NAME = 'rds_log_cat'
 SUFFIX = 'it'
 
 
+class RunInDirectory(object):
+
+    def __init__(self, new_pwd):
+        self.new_pwd = new_pwd
+        self.old_pwd = None
+
+    def __enter__(self):
+        self.old_pwd = os.getcwd()
+        os.chdir(self.new_pwd)
+
+    def __exit__(self, *_):
+        os.chdir(self.old_pwd)
+
+
 class Stack(object):
 
     def __init__(self, template_file, suffix='it', region=None, tags=None):
-        self.logger = cfn_sphere.util.get_logger()
-        self.logger.level = logging.INFO
-
         self.template = template_file
         self.suffix = suffix
-        self.tags = tags if tags is not None else []
-        self._change_to_workdir(os.path.dirname(
-            os.path.realpath(self.template)))
-        self.config = cfn_sphere.file_loader.FileLoader.get_yaml_or_json_file(
-            os.path.basename(template_file), None)
+        self.tags = tags or []
+        self.config = self.load_config()
         if region is not None:
             self.update_region(region)
         self.region = self.get_region()
+        self.logger = cfn_sphere.util.get_logger()
+        self.logger.setLevel(logging.INFO)
+
+    def _get_template_dir(self):
+        return os.path.dirname(os.path.realpath(self.template))
+
+    def load_config(self):
+        with RunInDirectory(self._get_template_dir()):
+            config = cfn_sphere.file_loader.FileLoader.get_yaml_or_json_file(
+                os.path.basename(self.template), None)
+        return config
 
     def create_stack_config(self):
         return cfn_sphere.stack_configuration.Config(config_dict=self.config)
@@ -73,26 +92,15 @@ class Stack(object):
                         break
         return result
 
-    def _change_to_workdir(self, path=None):
-        if path is not None:
-            self.workdir = path
-            self.savedPath = os.getcwd()
-            self.logger.debug('saved path: %s', self.savedPath)
-        os.chdir(self.workdir)
-
-    def _restore_dir(self):
-        os.chdir(self.savedPath)
-
     def create(self):
-        self._change_to_workdir()
-        self.logger.info('Region: %s, Creating/Updating cfn stacks from %s',
-                         self.region, self.template)
-        self.rename_stacks()
-        self.logger.debug('new config: \n %s',
-                          json.dumps(self.config, indent=2))
-        cfn_sphere.StackActionHandler(
-            config=self.create_stack_config()).create_or_update_stacks()
-        self._restore_dir()
+        with RunInDirectory(self._get_template_dir()):
+            self.logger.info('Region: %s, Creating/Updating cfn stacks from %s',
+                             self.region, self.template)
+            self.rename_stacks()
+            self.logger.debug('new config: \n %s',
+                              json.dumps(self.config, indent=2))
+            cfn_sphere.StackActionHandler(
+                config=self.create_stack_config()).create_or_update_stacks()
 
     def delete(self):
         cfn_sphere.StackActionHandler(
@@ -111,30 +119,45 @@ def keyname_of_lambda(project_name):
     return keyname
 
 
-def get_stack_name(project_name):
-    return '{}'.format(project_name.replace('_', '-'))
+def get_stack_basename():
+    return '{}'.format(BASE_PROJECT_NAME.replace('_', '-'))
 
 
-def run():
-    # pybuilder.cli.main('-o', '-E', 'teamcity')
-    bucket = '{}-eu-west-1'.format(os.environ.get('DISTRIBUTION_BUCKET_NAME'))
+def get_stack_paramters():
+    bucket = '{}-eu-west-1'.format(os.environ['DISTRIBUTION_BUCKET_NAME'])
     key = os.environ.get(
         'uploaded_zip', keyname_of_lambda(BASE_PROJECT_NAME))
-    stack_basename = get_stack_name(BASE_PROJECT_NAME)
-    stack = Stack('cfn/stacks.yaml')
-    parameters = {
+    return {
         'lambdaFunctionS3Bucket': bucket,
         'lambdaFunctionS3Key': key,
         'logFileType': 'postgresql'
     }
-    stack_name = get_stack_name(BASE_PROJECT_NAME)
-    stack.update_parameters(stack_name, parameters)
+
+
+def create_test_stack():
+    parameters = get_stack_paramters()
+    stack_basename = get_stack_basename()
+    stack = Stack('cfn/stacks.yaml')
+    stack.update_parameters(stack_basename, parameters)
     stack.create()
-    os.environ['STACK_NAME_LAMBDA'] = '{}-{}'.format(stack_basename, SUFFIX)
+    return stack
+
+
+def run_integration_tests():
+    os.environ[
+        'STACK_NAME_LAMBDA'] = '{}-{}'.format(get_stack_basename(), SUFFIX)
     result = pybuilder.cli.main(
         '-X', '-E', 'teamcity', 'run_integration_tests')
-    stack.delete()
     return result
+
+
+def run():
+    # pybuilder.cli.main('-o', '-E', 'teamcity')
+    stack = create_test_stack()
+    try:
+        return run_integration_tests()
+    finally:
+        stack.delete()
 
 if __name__ == '__main__':
     region = os.environ.get('AWS_DEFAULT_REGION')
