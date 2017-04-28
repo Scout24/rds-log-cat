@@ -1,0 +1,6 @@
+region: @region@
+stacks:
+  rds-log-cat-distribution-bucket:
+    template-url: distribution-bucket.yaml
+    parameters:
+      name: @account_name@-rds-log-cat-distribution-@region@

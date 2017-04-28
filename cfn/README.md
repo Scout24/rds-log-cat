@@ -12,6 +12,13 @@ Dependencies
 Build and Deploy
 --------------
 
+Onetimer: Setup the distribution bucket in a region:
+
+    $AWS_ACCOUNT_NAME=foo
+    sed -e "s/@region@/${AWS_DEFAULT_REGION}/g" -e "s/@account_name@/${AWS_ACCOUNT_NAME}/g" distribution-bucket.template > distribution-bucket-stack.yaml
+    cf sync -y ./distribution-bucket-stack.yaml
+
+
 If you not already have, build & deploy the lambda. You need to set the distribution bucket once:
 
     export DISTRIBUTION_BUCKET_PREFIX=[a bucket where to put the lambda zip, AWS_DEFAULT_REGION will be added]
