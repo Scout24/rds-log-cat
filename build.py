@@ -24,7 +24,7 @@ default_task = ['clean', 'analyze', 'package']
 
 def get_distribution_bucket_name():
     region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
-    return '{}-{}'.formet(os.environ.get('DISTRIBUTION_BUCKET_PREFIX'), region_to_deploy))
+    return '{}-{}'.format(os.environ.get('DISTRIBUTION_BUCKET_PREFIX'), region_to_deploy)
 
 
 @init
@@ -43,7 +43,7 @@ def set_properties(project):
     Distribution bucket setting for lambda
     '''
     project.set_property(
-        'bucket_name', os.environ.get('DISTRIBUTION_BUCKET_NAME'), get_distribution_bucket_name())
+        'bucket_name', os.environ.get('DISTRIBUTION_BUCKET_NAME', get_distribution_bucket_name()))
     # if you want to distribute outside your account, change the following to
     # 'public-read'
     project.set_property(
