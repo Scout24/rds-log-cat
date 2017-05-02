@@ -26,9 +26,17 @@ def get_distribution_bucket_name():
     region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
     return '{}-{}'.format(os.environ.get('DISTRIBUTION_BUCKET_PREFIX'), region_to_deploy)
 
+def check_env():
+    if os.environ.get('DISTRIBUTION_BUCKET_NAME') is None and os.environ.get('DISTRIBUTION_BUCKET_PREFIX') is None:
+        print("missing DISTRIBUTION_BUCKET_PREFIX or DISTRIBUTION_BUCKET_NAME in environment")
+        raise Exception
+    if os.environ.get('AWS_DEFAULT_REGION') in None:
+        print("missing AWS_DEFAULT_REGION in environment.")
+        raise Exception
 
 @init
 def set_properties(project):
+    check_env()
     project.build_depends_on("unittest2")
     project.build_depends_on("moto")
     project.build_depends_on("mock")
