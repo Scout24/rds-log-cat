@@ -27,11 +27,14 @@ def get_distribution_bucket_name():
     return '{}-{}'.format(os.environ.get('DISTRIBUTION_BUCKET_PREFIX'), region_to_deploy)
 
 def check_env():
+    is_error = False
     if os.environ.get('DISTRIBUTION_BUCKET_NAME') is None and os.environ.get('DISTRIBUTION_BUCKET_PREFIX') is None:
         print("missing DISTRIBUTION_BUCKET_PREFIX or DISTRIBUTION_BUCKET_NAME in environment")
-        raise Exception
-    if os.environ.get('AWS_DEFAULT_REGION') in None:
+        is_error = True
+    if os.environ.get('AWS_DEFAULT_REGION') is None:
         print("missing AWS_DEFAULT_REGION in environment.")
+        is_error = True
+    if is_error:
         raise Exception
 
 @init
