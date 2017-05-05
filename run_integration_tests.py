@@ -59,7 +59,7 @@ class Stack(object):
 
     def update_parameters(self, stack_name, parameters):
         stack_parameters = self.config['stacks'][stack_name]['parameters']
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             stack_parameters[key] = value
         self.config['stacks'][stack_name]['parameters'] = stack_parameters
 
@@ -70,11 +70,11 @@ class Stack(object):
         '''
         new_stacks = {}
         mapping = {}
-        for key, value in self.config['stacks'].iteritems():
+        for key, value in self.config['stacks'].items():
             new_key = '{}-{}'.format(key, self.suffix)
             new_stacks[new_key] = value
             mapping[key] = new_key
-        for key, value in new_stacks.iteritems():
+        for key, value in new_stacks.items():
             new_stacks[key] = self._rename_refs(value, mapping)
         self.config['stacks'] = new_stacks
 
@@ -82,7 +82,7 @@ class Stack(object):
         if 'parameters' not in stack:
             return stack
         result = stack
-        for key, value in stack['parameters'].iteritems():
+        for key, value in stack['parameters'].items():
             if value.lower().startswith('|ref|'):
                 ref = value.split('|', 2)[2]
                 for old, new in mapping.iteritems():
