@@ -23,10 +23,14 @@ default_task = ['clean', 'analyze', 'package']
 
 
 def get_distribution_bucket_name():
-    region_to_deploy = os.environ.get('AWS_DEFAULT_REGION')
+    region_to_deploy = os.environ['AWS_DEFAULT_REGION']
     return '{}-{}'.format(os.environ.get('DISTRIBUTION_BUCKET_PREFIX'), region_to_deploy)
 
 def check_env():
+    '''
+    If you set DISTRIBUTION_BUCKET_NAME artifacts will be deployed in this bucket, regardless of the region.
+    To be region aware use: DISTRIBUTION_BUCKET_PREFIX
+    '''
     is_error = False
     if os.environ.get('DISTRIBUTION_BUCKET_NAME') is None and os.environ.get('DISTRIBUTION_BUCKET_PREFIX') is None:
         print("missing DISTRIBUTION_BUCKET_PREFIX or DISTRIBUTION_BUCKET_NAME in environment")
