@@ -33,7 +33,11 @@ Build and deploy with the "teamcity" profile:
     pyb -o -E teamcity
    
 At the end you will see, where the lambda is deployed to.
+Now you can test the function in AWS with:
 
+   ./run_integration_tests.py
+
+If this succeeded you can deploy the cloudformation stack (see deployed artifacts).
 Configuration is made in the description section of the function.
 
 * kinesisStream - kinesis stream to post to

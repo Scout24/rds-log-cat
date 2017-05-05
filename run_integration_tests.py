@@ -68,7 +68,7 @@ class Stack(object):
     def rename_stacks(self):
         '''
         rename stacks with adding suffix
-        renames refs to stack too
+        renames refs to stacks too
         '''
         new_stacks = {}
         mapping = {}
