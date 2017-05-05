@@ -65,6 +65,9 @@ class Stack(object):
             stack_parameters[key] = value
         self.config['stacks'][stack_name]['parameters'] = stack_parameters
 
+    def update_stack_names(self):
+        self.rename_stacks()
+
     def rename_stacks(self):
         '''
         rename stacks with adding suffix
@@ -98,7 +101,6 @@ class Stack(object):
         with RunInDirectory(self._get_template_dir()):
             self.logger.info('Region: %s, Creating/Updating cfn stacks from %s',
                              self.region, self.template)
-            self.rename_stacks()
             self.logger.debug('new config: \n %s',
                               json.dumps(self.config, indent=2))
             cfn_sphere.StackActionHandler(
@@ -138,12 +140,12 @@ def get_stack_paramters():
     }
 
 
-def create_test_stack():
+def configure_test_stack():
     parameters = get_stack_paramters()
     stack_basename = get_stack_basename()
     stack = Stack('cfn/stacks.yaml')
     stack.update_parameters(stack_basename, parameters)
-    stack.create()
+    stack.update_stack_names()
     return stack
 
 
@@ -157,7 +159,9 @@ def run_integration_tests():
 
 def run():
     # pybuilder.cli.main('-o', '-E', 'teamcity')
-    stack = create_test_stack()
+    stack = configure_test_stack()
+    stack.delete()
+    stack.create()
     try:
         return run_integration_tests()
     finally:
