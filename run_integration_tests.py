@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import logging
 import json
 import os
@@ -124,7 +126,9 @@ def get_stack_basename():
 
 
 def get_stack_paramters():
-    bucket = '{}-eu-west-1'.format(os.environ['DISTRIBUTION_BUCKET_NAME'])
+    bucket = os.environ.get(
+        'DISTRIBUTION_BUCKET_NAME',
+        '{}-eu-west-1'.format(os.environ['DISTRIBUTION_BUCKET_PREFIX']))
     key = os.environ.get(
         'uploaded_zip', keyname_of_lambda(BASE_PROJECT_NAME))
     return {
