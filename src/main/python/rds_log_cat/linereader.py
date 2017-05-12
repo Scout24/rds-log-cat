@@ -7,7 +7,7 @@ def get_reader_with_lines_splitted(flo):
     return csv.reader(paginate(flo), delimiter=' ', quotechar='"')
 
 
-def paginate(readable, buffersize=4069):
+def paginate(readable, buffersize=4096):
     buf = ''
     while True:
         while '\n' not in buf:
