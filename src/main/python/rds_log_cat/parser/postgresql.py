@@ -11,11 +11,15 @@ class Postgresql(Parser):
 
     def compose_timestamp(self, date, time, timezone):
         if len(date) != 10:
-            raise LineParserException('wrong length of date - wrong date is: ' + date)
+            raise LineParserException(
+                'wrong length of date - wrong date is: {}'.format(date))
         if len(time) != 8:
-            raise LineParserException('wrong length of time - wrong time is: ' + time)
+            raise LineParserException(
+                'wrong length of time - wrong time is: {}'.format(time))
         if timezone != 'UTC':
-            raise LineParserException('Only able to parse times in UTC. You gave {}'.format(timezone))
+            raise LineParserException(
+                'Only able to parse times in UTC. You gave {}'
+                .format(timezone))
         return "{}T{}.000000Z".format(date, time)
 
     def _decompose_multi_var_field(self, field):
@@ -31,7 +35,10 @@ class Postgresql(Parser):
         if len(line) < expected_min_no_fields:
             raise LineParserException('line too short')
 
-        (timezone, pid, log_level) = self._decompose_multi_var_field(line[2])
+        try:
+            (timezone, pid, log_level) = self._decompose_multi_var_field(line[2])
+        except Exception:
+            raise LineParserException('decompose multi_var_field failed!')
 
         return {
             '@timestamp': self.compose_timestamp(line[0], line[1], timezone),

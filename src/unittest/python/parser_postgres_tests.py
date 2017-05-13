@@ -56,9 +56,21 @@ class PostgresqlTests(unittest.TestCase):
     def test_parse_wrong_test_log(self):
         with open('src/unittest/resources/postgresql_test_wrong.log') as f:
             log_reader = linereader.get_reader_with_lines_splitted(f)
-            for index, line in enumerate(log_reader):
+            for _, line in enumerate(log_reader):
                 with self.assertRaises(LineParserException):
                     self.parser.parse(line)
+
+    def test_parse_wrong_test_log_fails_on_multi_var_decompose(self):
+        with open('src/unittest/resources/postgresql_test_wrong.log') as f:
+            log_reader = linereader.get_reader_with_lines_splitted(f)
+            for index, line in enumerate(log_reader):
+                if index != 1:
+                    continue
+                # second line fails due decomposing multi var field
+                with self.assertRaises(LineParserException) as cma:
+                    self.parser.parse(line)
+                self.assertEqual('decompose multi_var_field failed!',
+                                 str(cma.exception))
 
 
 if __name__ == '__main__':
