@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 import urllib
+import os
 
 import boto3
 from aws_lambda_configurer import load_config
@@ -11,8 +12,6 @@ from aws_lambda_configurer import load_config
 import rds_log_cat.linereader as linereader
 import rds_log_cat.sender as sender
 from rds_log_cat.parser.parser import Parser, LineParserException
-
-logging.getLogger().setLevel(logging.INFO)
 
 
 def get_config(context):
@@ -38,6 +37,7 @@ def generate_partition_key(file_name, line_index):
 def handler(event, context):
     logging.info('Received event: {}'.format(event))
     (logfile_type, kinesis_stream, origin) = get_config(context)
+    set_log_level()
     for bucket, key in get_bucket_and_key_from_event(event):
         logging.info("Processing key {} from bucket {}.".format(key, bucket))
         read_and_send(
@@ -75,3 +75,7 @@ def s3_get_object_raw_stream(bucket, key):
     client = boto3.client('s3')
     response = client.get_object(Bucket=bucket, Key=key)
     return response.get('Body')._raw_stream
+
+
+def set_log_level():
+    logging.getLogger().setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
