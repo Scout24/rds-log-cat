@@ -5,12 +5,14 @@ import time
 
 import boto3
 
-logging.getLogger().setLevel(logging.DEBUG)
-
 
 def send_in_batches(records, stream_name, batch_size=500):
     for chunk in chunks(records, batch_size):
-        send(chunk, stream_name)
+        if stream_name != '':
+            send(chunk, stream_name)
+        else:
+            logging.info('stream not defined. not sending batch.')
+            logging.debug('chuck: %r', chunk)
 
 
 def chunks(array, size):

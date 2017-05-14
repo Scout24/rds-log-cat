@@ -43,8 +43,6 @@ def handler(event, context):
         read_and_send(
             s3_get_object_raw_stream(bucket, key), logfile_type, kinesis_stream, key, origin)
 
-# TODO: counters
-
 
 def process(reader, parser, file_name, origin):
     records = []
@@ -61,12 +59,11 @@ def process(reader, parser, file_name, origin):
             records.append(record)
             co_read += 1
         except LineParserException as lpe:
-            logging.warn('skipped unparsable line (%d) because: %s',
-                         index + 1, lpe)
-            logging.debug('unparsed line (%d): %s', index, line)
+            logging.debug('skipped unparsable line (%d) because: %s',
+                          index + 1, lpe)
+            logging.debug('unparsed line (%d): %s', index + 1, line)
             co_skipped += 1
-    logging.info('COUNTERS|read|%d|skipped|%d',
-                 co_read, co_skipped)
+    logging.info('COUNTERS|read|%d|skipped|%d', co_read, co_skipped)
     return records
 
 
