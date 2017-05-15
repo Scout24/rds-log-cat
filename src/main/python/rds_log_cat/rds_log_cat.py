@@ -45,7 +45,6 @@ def handler(event, context):
 
 
 def process(reader, parser, file_name, origin):
-    records = []
     co_read = 0
     co_skipped = 0
     for index, line in enumerate(reader):
@@ -56,15 +55,14 @@ def process(reader, parser, file_name, origin):
             record['Data'] = json.dumps(data)
             record['PartitionKey'] = generate_partition_key(file_name, index)
             # TODO: add more fields for the source of this record
-            records.append(record)
             co_read += 1
+            yield record
         except LineParserException as lpe:
             logging.debug('skipped unparsable line (%d) because: %s',
                           index + 1, lpe)
             logging.debug('unparsed line (%d): %s', index + 1, line)
             co_skipped += 1
     logging.info('COUNTERS|read|%d|skipped|%d', co_read, co_skipped)
-    return records
 
 
 def read_and_send(stream, logfile_type, send_to, file_name, origin):

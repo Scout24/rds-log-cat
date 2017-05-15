@@ -15,10 +15,16 @@ def send_in_batches(records, stream_name, batch_size=500):
             logging.debug('chuck: %r', chunk)
 
 
-def chunks(array, size):
+def chunks(iterable, size):
     """Yield successive n-sized chunks from l."""
-    for i in xrange(0, len(array), size):
-        yield array[i:i + size]
+    chunk = []
+    for item in iterable:
+        chunk.append(item)
+        if len(chunk) == size:
+            yield chunk
+            chunk = []
+    if chunk:
+        yield chunk
 
 
 def send(chunk, stream_name, client=None):

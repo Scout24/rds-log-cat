@@ -78,6 +78,7 @@ class Tests(unittest.TestCase):
         parser = MagicMock()
         parser.parse.side_effect = [{'id': 1}, {'id': 2}]
         result = rds_log_cat.process(reader, parser, '', 'foo')
+        result = list(result)
         expected = [{'PartitionKey': '641ce8fd24c9a626691d97952ff1a2abcbc553e0a9f5ff987b302cc8',
                      'Data': '{"origin": "foo", "id": 1}'},
                     {'PartitionKey': 'e2b13fb360b1ec2d2474b3482c7c55e7662d589f1fcf057a9c5cd555',
@@ -91,7 +92,7 @@ class Tests(unittest.TestCase):
         parser = MagicMock()
         parser.parse.side_effect = [{'foo': 0}, LineParserException(), {}]
         result = rds_log_cat.process(reader, parser, '', '')
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(list(result)), 2)
 
     @patch('rds_log_cat.rds_log_cat.process')
     @patch('rds_log_cat.linereader.get_reader_with_lines_splitted')

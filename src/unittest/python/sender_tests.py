@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import, division
 import unittest2 as unittest
 from mock import MagicMock, patch, call
 
-from rds_log_cat.sender import (send_in_batches, send)
+from rds_log_cat.sender import (chunks, send_in_batches, send)
 
 
 class SenderTests(unittest.TestCase):
@@ -11,6 +11,16 @@ class SenderTests(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         pass
+
+    def test_chunks_with_array(self):
+        in_array = [1, 2, 3, 4, 5]
+        result = chunks(in_array, 2)
+        self.assertEqual(list(result), [[1, 2], [3, 4], [5]])
+
+    def itest_chunks_with_generator(self):
+        generator = (i for i in (1, 2, 3, 4, 5))
+        result = chunks(generator, 2)
+        self.assertEqual(list(result), [[1, 2], [3, 4], [5]])
 
     @patch('rds_log_cat.sender.send')
     def test_send_in_batches(self, send):

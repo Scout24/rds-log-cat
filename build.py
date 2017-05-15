@@ -57,8 +57,9 @@ def set_properties(project):
     '''
     Distribution bucket setting for lambda
     '''
-    project.set_property(
-        'bucket_name', os.environ.get('DISTRIBUTION_BUCKET_NAME', get_distribution_bucket_name()))
+    dist_bucket = os.environ.get('DISTRIBUTION_BUCKET_NAME', get_distribution_bucket_name())
+    project.set_property('bucket_name', dist_bucket)
+    print('distribute to: %s' % dist_bucket)
     # if you want to distribute outside your account, change the following to
     # 'public-read'
     project.set_property(
@@ -93,8 +94,9 @@ def set_properties_for_teamcity_builds(project):
     ]
     project.set_property('install_dependencies_index_url',
                          os.environ.get('PYPIPROXY_URL'))
-    project.set_property(
-        'bucket_name', get_distribution_bucket_name())
+    dist_bucket = get_distribution_bucket_name()
+    print('distribute to (based on DISTRIBUTION_BUCKET_PREFIX): %s' % dist_bucket)
+    project.set_property('bucket_name', dist_bucket)
 
     project.set_property('template_files',
                          [
