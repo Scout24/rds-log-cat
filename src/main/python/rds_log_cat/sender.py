@@ -6,7 +6,7 @@ import time
 import boto3
 
 
-def send_in_batches(records, stream_name, batch_size=500):
+def send_in_batches(records, stream_name, batch_size=1000):
     for chunk in chunks(records, batch_size):
         if stream_name != '':
             send(chunk, stream_name)
