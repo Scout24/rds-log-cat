@@ -81,3 +81,5 @@ def s3_get_object_raw_stream(bucket, key):
 
 def set_log_level():
     logging.getLogger().setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
+    logging.getLogger('botocore').setLevel(logging.WARN)
+    logging.getLogger('s3transfer').setLevel(logging.WARN)

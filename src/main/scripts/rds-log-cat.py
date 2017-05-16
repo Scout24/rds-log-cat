@@ -11,7 +11,7 @@ import rds_log_cat.rds_log_cat as rlc
 
 if __name__ == "__main__":
     print("local mode executing ...")
-    logging.getLogger().setLevel(os.getenv('LOG_LEVEL', 'INFO'))
+    rlc.set_log_level()
     bucket = sys.argv[1]
     key = sys.argv[2]
     logfile_type = sys.argv[3]
