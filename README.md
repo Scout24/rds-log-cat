@@ -3,8 +3,6 @@
 Shipping RDS logs from s3 into a kinesis stream.
 For example: This enables you to stream your logs into a elastic search cluster with kibana. Or any other logging/monitoring solutions.
 
-This is in an early development stage ... not yet ready to use.
-
 related projects:
 - [RDS Log Dog](https://github.com/ImmobilienScout24/rds-log-dog) : AWS RDS Logs to s3
 
