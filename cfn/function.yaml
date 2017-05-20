@@ -48,7 +48,7 @@ Resources:
           - '"'
           - '}'
       Runtime: "python2.7"
-      Timeout: "120"
+      Timeout: "300"
 
 # ---------------------------------------------------------
 # Policy to Execute the lambda 

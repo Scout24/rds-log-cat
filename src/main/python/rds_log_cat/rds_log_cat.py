@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 import urllib
+import os
 
 import boto3
 from aws_lambda_configurer import load_config
@@ -11,8 +12,6 @@ from aws_lambda_configurer import load_config
 import rds_log_cat.linereader as linereader
 import rds_log_cat.sender as sender
 from rds_log_cat.parser.parser import Parser, LineParserException
-
-logging.getLogger().setLevel(logging.INFO)
 
 
 def get_config(context):
@@ -38,16 +37,16 @@ def generate_partition_key(file_name, line_index):
 def handler(event, context):
     logging.info('Received event: {}'.format(event))
     logfile_type, kinesis_stream, origin = get_config(context)
+    set_log_level()
     for bucket, key in get_bucket_and_key_from_event(event):
         logging.info("Processing key {} from bucket {}.".format(key, bucket))
         read_and_send(
             s3_get_object_raw_stream(bucket, key), logfile_type, kinesis_stream, key, origin)
 
-# TODO: counters
-
 
 def process(reader, parser, file_name, origin):
-    records = []
+    co_read = 0
+    co_skipped = 0
     for index, line in enumerate(reader):
         record = {}
         try:
@@ -56,11 +55,14 @@ def process(reader, parser, file_name, origin):
             record['Data'] = json.dumps(data)
             record['PartitionKey'] = generate_partition_key(file_name, index)
             # TODO: add more fields for the source of this record
-            records.append(record)
-        except LineParserException:
-            logging.debug('skipped line {}'.format(index + 1))
-            # TODO count overall skipped lines
-    return records
+            co_read += 1
+            yield record
+        except LineParserException as lpe:
+            logging.debug('skipped unparsable line (%d) because: %s',
+                          index + 1, lpe)
+            logging.debug('unparsed line (%d): %s', index + 1, line)
+            co_skipped += 1
+    logging.info('COUNTERS|read|%d|skipped|%d', co_read, co_skipped)
 
 
 def read_and_send(stream, logfile_type, send_to, file_name, origin):
@@ -75,3 +77,9 @@ def s3_get_object_raw_stream(bucket, key):
     client = boto3.client('s3')
     response = client.get_object(Bucket=bucket, Key=key)
     return response.get('Body')._raw_stream
+
+
+def set_log_level():
+    logging.getLogger().setLevel(os.environ.get('LOG_LEVEL', 'INFO'))
+    logging.getLogger('botocore').setLevel(logging.WARN)
+    logging.getLogger('s3transfer').setLevel(logging.WARN)
