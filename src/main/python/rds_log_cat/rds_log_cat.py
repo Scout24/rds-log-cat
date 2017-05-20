@@ -20,14 +20,14 @@ def get_config(context):
     logfile_type = config.get('type')
     stream_to_send = config.get('kinesisStream')
     origin = config.get('origin', 'rds')
-    return (logfile_type, stream_to_send, origin)
+    return logfile_type, stream_to_send, origin
 
 
 def get_bucket_and_key_from_event(event):
     for record in event['Records']:
         bucket = record['s3']['bucket']['name']
         key = urllib.unquote_plus(record['s3']['object']['key']).decode('utf8')
-        yield (bucket, key)
+        yield bucket, key
 
 
 def generate_partition_key(file_name, line_index):
@@ -36,7 +36,7 @@ def generate_partition_key(file_name, line_index):
 
 def handler(event, context):
     logging.info('Received event: {}'.format(event))
-    (logfile_type, kinesis_stream, origin) = get_config(context)
+    logfile_type, kinesis_stream, origin = get_config(context)
     set_log_level()
     for bucket, key in get_bucket_and_key_from_event(event):
         logging.info("Processing key {} from bucket {}.".format(key, bucket))
