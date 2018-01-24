@@ -15,6 +15,13 @@ rds-log-cat is a lambda function which can be triggered by a S3 bucket (on new f
 How to install
 ==============
 
+If you are in the vertical ImmobilienScout, the simplest and most automated method is to use teamcity.
+
+You can put your copy of rds-log-cat to [our project](https://teamcity.rz.is/admin/editProject.html?projectId=Infrastructure_Aws_RdsLoggingStacks_BDeployToAccounts) or in your own project.
+Please use this [rds-log-template](
+https://teamcity.rz.is/admin/editBuildParams.html?id=template:Infrastructure_Aws_RdsLoggingStacks_AwsRdsLogCatFullCiCdSingleAccount)
+
+
 To build and test locally, simply execute:
    
     pyb
@@ -64,3 +71,8 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Related
+=======
+
+- [rds-log-dog](https://github.com/ImmobilienScout24/rds-log-dog)
