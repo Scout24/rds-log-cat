@@ -1,7 +1,8 @@
-# rds-log-cat
+# rds-log-cat [UNMAINTAINED]
 
 Shipping RDS logs from s3 into a kinesis stream.
 For example: This enables you to stream your logs into a elastic search cluster with kibana. Or any other logging/monitoring solutions.
+The repo is not maintained any more, because there is no use for it from our side.
 
 related projects:
 - [RDS Log Dog](https://github.com/ImmobilienScout24/rds-log-dog) : AWS RDS Logs to s3
